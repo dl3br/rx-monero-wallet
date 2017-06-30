@@ -1,6 +1,6 @@
 * Client Monero wallet RPC TypeScript
 :PROPERTIES:
-:MODIFIED: [2017-06-30 Fri 16:51]
+:MODIFIED: [2017-06-30 Fri 19:07]
 :END:
 
 *Client for the monero-wallet-rpc using rxjs*
@@ -26,7 +26,7 @@ wallet.getaddress()
 ** if you prefer working with Promise, query the address with 
 #+BEGIN_SRC typescript
 wallet.getaddress()
-  .map(res => res.address) //optional line, but demonstrates the advantage of Observable over Promise
+  .map((res) => res.address) //optional line, but demonstrates the advantage of Observable over Promise
   .toPromise()
   .then(console.log)
 #+END_SRC
@@ -204,7 +204,7 @@ streamheight()
 
 
 ** Donation
-if the library is useful for you, consider throwing coins to: 
+if the library is useful for you, consider throwing XMR to: 
 
 #+BEGIN_SRC 
 42Eky2DHrD5NYyrgfB48dBJ8YPBN1MBxTTWb5V9KgPT2SSBkmukzW4pJnkWuGomc1u7Mw28FNTW6a7TUaZHdAcVD2CHvmc5
