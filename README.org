@@ -1,26 +1,9 @@
-* Monero wallet TypeScript
+* Client Monero wallet RPC TypeScript
 :PROPERTIES:
-:MODIFIED: [2017-06-30 Fri 16:04]
+:MODIFIED: [2017-06-30 Fri 16:19]
 :END:
 
-*Communicates with the monero-wallet-rpc*
-
-Reference for using monero's wallet rpc from which this library derives:
-[[https://getmonero.org/knowledge-base/developer-guides/wallet-rpc]]
-
-It might fit together with [[https://github.com/cryptoshrimpi/monerod-js]] that
-communicates with the monero daemon with typescript
-
-I based myself on [[https://github.com/PsychicCat/monero-nodejs]] for the utils
-
-I added most of the types, thus please use a text editor with decent support for
-typescript for getting all the autocompletion and typechecking magic, and enjoy
-the coding experience without having to console.log everything
-
-I wrote this library using functional reactive programming (to learn about it),
-in special the Observable monad. There's a real benefit to have a type system
-when using Observables, as one can map over objects (with autocompletion) that were not
-yet observed.
+*Client for the monero-wallet-rpc using rxjs*
 
 * Examples
 ** initialize the wallet object
@@ -219,5 +202,31 @@ const streamheight = () => wallet.getheight()
 streamheight()
 #+END_SRC
 
+
+** Donation
+if the library is useful for you, consider throwing coins to: 
+
+#+BEGIN_SRC 
+42Eky2DHrD5NYyrgfB48dBJ8YPBN1MBxTTWb5V9KgPT2SSBkmukzW4pJnkWuGomc1u7Mw28FNTW6a7TUaZHdAcVD2CHvmc5
+#+END_SRC
+
+
+** References
+Reference for using monero's wallet rpc from which this library derives:
+[[https://getmonero.org/knowledge-base/developer-guides/wallet-rpc]]
+
+It might fit together with [[https://github.com/cryptoshrimpi/monerod-js]] that
+communicates with the monero daemon with typescript
+
+I based myself on [[https://github.com/PsychicCat/monero-nodejs]] for the utils
+
+I added most of the types, thus please use a text editor with decent support for
+typescript for getting all the autocompletion and typechecking magic, and enjoy
+the coding experience without having to console.log everything
+
+I wrote this library using functional reactive programming (to learn about it),
+in special the Observable monad. There's a real benefit to have a type system
+when using Observables, as one can map over objects (with autocompletion) that were not
+yet observed.
 
 
