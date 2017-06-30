@@ -1,6 +1,6 @@
 * Client Monero wallet RPC TypeScript
 :PROPERTIES:
-:MODIFIED: [2017-06-30 Fri 16:19]
+:MODIFIED: [2017-06-30 Fri 16:51]
 :END:
 
 *Client for the monero-wallet-rpc using rxjs*
@@ -49,7 +49,7 @@ wallet.getaddress()
 #+BEGIN_SRC typescript
 wallet.getbalance()
   .map((res) => new Atomic(res.balance).toXmr().toString())
-  .subscribe(console.dir)
+  .subscribe(console.log)
 #+END_SRC
 #+BEGIN_SRC 
 '707.446307580127'
@@ -190,7 +190,7 @@ streamheight()
 
 
 same stream but now using a more useful callback for error recovery. 
-#+BEGIN_SRC 
+#+BEGIN_SRC typescript
 const streamheight = () => wallet.getheight()
   .map((res) => res.height)
   .delay(1000)
@@ -210,6 +210,8 @@ if the library is useful for you, consider throwing coins to:
 42Eky2DHrD5NYyrgfB48dBJ8YPBN1MBxTTWb5V9KgPT2SSBkmukzW4pJnkWuGomc1u7Mw28FNTW6a7TUaZHdAcVD2CHvmc5
 #+END_SRC
 
+if it annoys you, try to steal from that wallet. 
+
 
 ** References
 Reference for using monero's wallet rpc from which this library derives:
@@ -220,6 +222,7 @@ communicates with the monero daemon with typescript
 
 I based myself on [[https://github.com/PsychicCat/monero-nodejs]] for the utils
 
+** Types and Typescript and Observables
 I added most of the types, thus please use a text editor with decent support for
 typescript for getting all the autocompletion and typechecking magic, and enjoy
 the coding experience without having to console.log everything
@@ -228,5 +231,4 @@ I wrote this library using functional reactive programming (to learn about it),
 in special the Observable monad. There's a real benefit to have a type system
 when using Observables, as one can map over objects (with autocompletion) that were not
 yet observed.
-
 
