@@ -41,7 +41,7 @@ wallet.getaddress()
 #+END_SRC
 
 ** if you prefer working with Promise, query the address with 
-#+BEGIN_SRC 
+#+BEGIN_SRC typescript
 wallet.getaddress()
   .map(res => res.address) //optional line, but demonstrates the advantage of Observable over Promise
   .toPromise()
@@ -53,7 +53,7 @@ wallet.getaddress()
 
 which is equivalent to: 
 
-#+BEGIN_SRC 
+#+BEGIN_SRC typescript
 wallet.getaddress()
   .toPromise()
   .then((res) => console.log(res.address))
