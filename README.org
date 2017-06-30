@@ -1,6 +1,6 @@
 * Monero wallet TypeScript
 :PROPERTIES:
-:MODIFIED: [2017-06-29 Thu 15:35]
+:MODIFIED: [2017-06-30 Fri 16:04]
 :END:
 
 *Communicates with the monero-wallet-rpc*
@@ -102,7 +102,7 @@ wallet.get_bulk_payments({ payment_ids: ['1234567890123456'],
     unlock_time: 0 } ]
 #+END_SRC
 
-** stream transfers to the current wallet in the mempool
+** listen to transfers send to the current wallet in mempool
 - uses recursive subscription to an Observable
 - the 3 arguments for .subscribe are the following callbacks: onNext, onError
   and onComplete
@@ -130,7 +130,34 @@ streamtransfer()
     type: 'pool' } ]
 #+END_SRC
 
-** create a stream of block height 
+** create a block height change detector 
+#+BEGIN_SRC typescript
+let lastHeight
+const heightChangeDetector = () => wallet.getheight()
+  .map((res) => res.height)
+  .delay(1000)
+  .subscribe(
+    (height) => {
+      if (height !== lastHeight) {
+        console.log(height) // do something more useful here
+        lastHeight = height
+      }
+    },
+    (err) => { console.error(err);
+                heightChangeDetector() },
+    heightChangeDetector)
+
+heightChangeDetector()
+#+END_SRC
+
+#+BEGIN_SRC 
+20838
+20839
+20840
+20842
+20843
+#+END_SRC
+
 
 #+BEGIN_SRC typescript
 const streamheight = () => wallet.getheight()
