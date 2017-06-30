@@ -1,0 +1,196 @@
+* Monero wallet TypeScript
+:PROPERTIES:
+:MODIFIED: [2017-06-29 Thu 15:35]
+:END:
+
+*Communicates with the monero-wallet-rpc*
+
+Reference for using monero's wallet rpc from which this library derives:
+[[https://getmonero.org/knowledge-base/developer-guides/wallet-rpc]]
+
+It might fit together with [[https://github.com/cryptoshrimpi/monerod-js]] that
+communicates with the monero daemon with typescript
+
+I based myself on [[https://github.com/PsychicCat/monero-nodejs]] for the utils
+
+I added most of the types, thus please use a text editor with decent support for
+typescript for getting all the autocompletion and typechecking magic, and enjoy
+the coding experience without having to console.log everything
+
+I wrote this library using functional reactive programming (to learn about it),
+in special the Observable monad. There's a real benefit to have a type system
+when using Observables, as one can map over objects (with autocompletion) that were not
+yet observed.
+
+* Examples
+** initialize the wallet object
+#+BEGIN_SRC typescript
+import { makeUrl, Wallet, Atomic, generatePaymentId } from './lib/wallet'
+const url = makeUrl('http', '127.0.0.1', '18082', 'json_rpc');
+const wallet = Wallet(url)
+#+END_SRC
+
+** then query the address of the current wallet
+#+BEGIN_SRC typescript
+wallet.getaddress()
+  .map((res) => res.address)
+  .subscribe(console.log)
+#+END_SRC
+#+BEGIN_SRC 
+9wq792k9sxVZiLn66S3Qzv8QfmtcwkdXgM5cWGsXAPxoQeMQ79md51PLPCijvzk1iHbuHi91pws5B7iajTX9KTtJ4bh2tCh
+#+END_SRC
+
+** if you prefer working with Promise, query the address with 
+#+BEGIN_SRC 
+wallet.getaddress()
+  .map(res => res.address) //optional line, but demonstrates the advantage of Observable over Promise
+  .toPromise()
+  .then(console.log)
+#+END_SRC
+#+BEGIN_SRC 
+9wq792k9sxVZiLn66S3Qzv8QfmtcwkdXgM5cWGsXAPxoQeMQ79md51PLPCijvzk1iHbuHi91pws5B7iajTX9KTtJ4bh2tCh
+#+END_SRC
+
+which is equivalent to: 
+
+#+BEGIN_SRC 
+wallet.getaddress()
+  .toPromise()
+  .then((res) => console.log(res.address))
+#+END_SRC
+#+BEGIN_SRC 
+9wq792k9sxVZiLn66S3Qzv8QfmtcwkdXgM5cWGsXAPxoQeMQ79md51PLPCijvzk1iHbuHi91pws5B7iajTX9KTtJ4bh2tCh
+#+END_SRC
+
+** get the wallets balance
+#+BEGIN_SRC typescript
+wallet.getbalance()
+  .map((res) => new Atomic(res.balance).toXmr().toString())
+  .subscribe(console.dir)
+#+END_SRC
+#+BEGIN_SRC 
+'707.446307580127'
+#+END_SRC
+
+
+** make an integrated address
+#+BEGIN_SRC typescript
+wallet.make_integrated_address({ payment_id: generatePaymentId(16) })
+  .subscribe(console.log)
+#+END_SRC
+
+#+BEGIN_SRC 
+{ integrated_address: 'A7Xn9qZeVE1ZiLn66S3Qzv8QfmtcwkdXgM5cWGsXAPxoQeMQ79md51PLPCijvzk1iHbuHi91pws5B7iajTX9KTtJ6HrNTTbikgW5Zm1CGn',
+  payment_id: 'a14ba0c1f740c728' }
+#+END_SRC
+
+
+** get payments using a list of payment_id
+- only one payment_id used on this example
+#+BEGIN_SRC typescript
+wallet.get_bulk_payments({ payment_ids: ['1234567890123456'],
+                           min_block_height: 0 })
+  .map((res) => res.payments)
+  .subscribe(console.log)
+#+END_SRC
+
+#+BEGIN_SRC 
+[ { amount: 1000000000000,
+    block_height: 12132,
+    payment_id: '1234567890123456',
+    tx_hash: 'ccd72c2394ad840fc6f0d475ac612e6cbe983ab9db953d7f3c7831c4caa40699',
+    unlock_time: 0 } ]
+#+END_SRC
+
+** stream transfers to the current wallet in the mempool
+- uses recursive subscription to an Observable
+- the 3 arguments for .subscribe are the following callbacks: onNext, onError
+  and onComplete
+- delay is the interval to wait between subscriptions in ms
+
+#+BEGIN_SRC typescript
+const streamtransfers = () => wallet.get_transfers({ pool: true })
+  .map((res) => res.pool)
+  .delay(1000)
+  .subscribe( (pool) => { if (pool) console.log(pool) },
+              console.error,
+              streamtransfers)
+
+streamtransfer()
+#+END_SRC
+
+#+BEGIN_SRC 
+[ { amount: 1000000000000,
+    fee: 0,
+    height: 0,
+    note: '',
+    payment_id: '0000000000000000',
+    timestamp: 1498741571,
+    txid: '21018c28384df394eca65a0bece75ae52611551b458757c844381663bfbad029',
+    type: 'pool' } ]
+#+END_SRC
+
+** create a stream of block height 
+
+#+BEGIN_SRC typescript
+const streamheight = () => wallet.getheight()
+  .map((res) => res.height)
+  .delay(1000)
+  .subscribe(console.log,
+             console.error,
+             streamheight)
+
+streamheight()
+#+END_SRC
+
+#+BEGIN_SRC 
+18172
+18172
+18172
+18172
+18172
+18172
+18172
+18173
+18173
+18173
+18173
+18173
+18173
+18173
+18173
+18173
+18173
+18173
+18173
+18173
+18173
+18173
+18173
+18173
+18173
+18173
+18173
+18175
+18175
+18175
+18175
+18175
+#+END_SRC
+
+
+same stream but now using a more useful callback for error recovery. 
+#+BEGIN_SRC 
+const streamheight = () => wallet.getheight()
+  .map((res) => res.height)
+  .delay(1000)
+  .subscribe(console.log,
+             (err) => { console.error(err) ;
+                        streamheight() },
+             streamheight)
+
+streamheight()
+#+END_SRC
+
+
+

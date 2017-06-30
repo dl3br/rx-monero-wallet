@@ -1,0 +1,46 @@
+import * as rxjsfetch from 'rxjs-fetch';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/operator/toPromise'
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/delay';
+
+const rpcBody = (method) => (params) =>
+  ({
+    jsonrpc: '2.0',
+    id: '0',
+    method: method,
+    params: params,
+  })
+
+
+// curried so that if i want to create class of curried functions for a given
+// wallet possible althought not using it as of now
+const configRequest = (args1) => (args2) =>
+  ({
+    method: 'Post',
+    headers: { 'Content-Type': 'application/json' },
+    ...args1,
+    body: JSON.stringify(args2),
+  })
+
+
+const jsonRpcRequest = (url) => (method, params = {}) =>
+  configRequest({ url: url })(
+    rpcBody(method)(params))
+
+
+export const request = (url) => (method, params?) =>
+  rxjsfetch(url, jsonRpcRequest(url)(method, params))
+    .flatMap((res) => res.json())
+    .map((response: Response) => response.result)
+
+
+export const makeUrl = (protocol, ip, port, interFace): string =>
+  `${protocol}://${ip}:${port}/${interFace}`;
+
+
+interface Response {
+  id: string;
+  jsonrpc: string;
+  result: any;
+}
