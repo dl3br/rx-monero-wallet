@@ -1,7 +1,7 @@
 {
   "name": "rx-monero-wallet",
-  "version": "1.0.0",
-  "description": "",
+  "version": "1.0.3",
+  "description": "Client for the monero-wallet-rpc using rxjs",
   "main": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
