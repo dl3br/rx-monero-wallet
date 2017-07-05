@@ -3,6 +3,13 @@ Client Monero wallet RPC TypeScript
 
 **Client for the monero-wallet-rpc using rxjs**
 
+install using npm
+=================
+
+``` shell
+npm i rx-monero-wallet
+```
+
 Examples
 ========
 
@@ -10,7 +17,7 @@ initialize the wallet object
 ----------------------------
 
 ``` javascript
-import { makeUrl, Wallet, Atomic, generatePaymentId } from './lib/wallet'
+import { makeUrl, Wallet, Atomic, Xmr, generatePaymentId } from 'rx-monero-wallet'
 const url = makeUrl('http', '127.0.0.1', '18082', 'json_rpc');
 const wallet = Wallet(url)
 ```
@@ -47,6 +54,35 @@ wallet.getaddress()
 ```
 
     9wq792k9sxVZiLn66S3Qzv8QfmtcwkdXgM5cWGsXAPxoQeMQ79md51PLPCijvzk1iHbuHi91pws5B7iajTX9KTtJ4bh2tCh
+
+listen to transfers send to the current wallet in mempool
+---------------------------------------------------------
+
+-   uses recursive subscription to an Observable
+-   the 3 arguments for .subscribe are the following callbacks: onNext,
+    onError and onComplete
+-   delay is the interval to wait between subscriptions in ms
+
+``` javascript
+const streamtransfers = () => wallet.get_transfers({ pool: true })
+  .delay(1000)
+  .map((res) => res.pool)
+  .filter((pool) => pool != undefined)
+  .subscribe(console.log,
+             console.error,
+             streamtransfers)
+
+streamtransfers()
+```
+
+    [ { amount: 1000000000000,
+        fee: 0,
+        height: 0,
+        note: '',
+        payment_id: '0000000000000000',
+        timestamp: 1498741571,
+        txid: '21018c28384df394eca65a0bece75ae52611551b458757c844381663bfbad029',
+        type: 'pool' } ]
 
 get the wallets balance
 -----------------------
@@ -87,35 +123,6 @@ wallet.get_bulk_payments({ payment_ids: ['1234567890123456'],
         payment_id: '1234567890123456',
         tx_hash: 'ccd72c2394ad840fc6f0d475ac612e6cbe983ab9db953d7f3c7831c4caa40699',
         unlock_time: 0 } ]
-
-listen to transfers send to the current wallet in mempool
----------------------------------------------------------
-
--   uses recursive subscription to an Observable
--   the 3 arguments for .subscribe are the following callbacks: onNext,
-    onError and onComplete
--   delay is the interval to wait between subscriptions in ms
-
-``` javascript
-const streamtransfers = () => wallet.get_transfers({ pool: true })
-  .delay(1000)
-  .map((res) => res.pool)
-  .filter((pool) => pool != undefined)
-  .subscribe(console.log,
-             console.error,
-             streamtransfers)
-
-streamtransfers()
-```
-
-    [ { amount: 1000000000000,
-        fee: 0,
-        height: 0,
-        note: '',
-        payment_id: '0000000000000000',
-        timestamp: 1498741571,
-        txid: '21018c28384df394eca65a0bece75ae52611551b458757c844381663bfbad029',
-        type: 'pool' } ]
 
 create a block height change detector
 -------------------------------------
