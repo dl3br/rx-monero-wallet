@@ -1,15 +1,11 @@
 {
   "name": "rx-monero-wallet",
-  "version": "1.0.5",
+  "version": "1.0.11",
   "description": "Client for the monero-wallet-rpc using rxjs",
-  "main": "./index.ts",
+  "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "files": [
-	  "wallet.ts",
-	  "request.ts"
-  ],
   "author": "dlebrecht",
   "license": "MIT",
   "dependencies": {

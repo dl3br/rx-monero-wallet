@@ -1,10 +1,11 @@
 {
   "compileOnSave": true,
   "compilerOptions": {
-    "outDir": "./built",
+    "outDir": "./dist",
     "sourceMap": true,
     "allowJs": true,
     "declaration": false,
+    "module": "commonjs", 
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -14,5 +15,9 @@
     "typeRoots": [
         "./node_modules/@types"
     ]
-  }
+},
+    "include": [
+	    "index.ts",
+	    "lib/*" 
+    ]
 }
