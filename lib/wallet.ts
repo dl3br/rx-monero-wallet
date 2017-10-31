@@ -74,29 +74,29 @@ export class Atomic extends Big {
 }
 
 
-type Balance = {
+interface Balance {
   balance: number; // - unsigned int; The total balance of the current monero-wallet-rpc in session.
   unlocked_balance: number; // - unsigned int; Unlocked funds are those funds that are sufficiently deep enough in the Monero blockchain to be considered safe to spend.
 }
 
 
-type Address = {
+interface Address {
   address: string;
 }
 
 
-type Height = {
+interface Height {
   height: number;
 }
 
 
-type Destination = {
+interface Destination {
   amount: number; // - unsigned int; Amount to send to each destination, in atomic units.
   address: Address; // - string; Destination public address.
 }
 
 
-type TransferIn = {
+interface TransferIn {
   destinations: Destination[];
   fee?: number; // - unsigned int; Ignored, will be automatically calculated.
   mixin: number; // - unsigned int; Number of outpouts from the blockchain to mix with (0 means no mixing).
@@ -106,14 +106,14 @@ type TransferIn = {
 }
 
 
-type TransferOut = {
+interface TransferOut {
   fee: number; // - Integer value of the fee charged for the txn.
   tx_hash: string; // - String for the publically searchable transaction hash
   tx_key: string; // - String for the transaction key if get_tx_key is true, otherwise, blank string.
 }
 
 
-type TransferSplitIn = {
+interface TransferSplitIn {
   destinations: Destination[];
   fee?: number; // - unsigned int; Ignored, will be automatically calculated.
   mixin: number; // - unsigned int; Number of outpouts from the blockchain to mix with (0 means no mixing).
@@ -124,26 +124,26 @@ type TransferSplitIn = {
 }
 
 
-type TransferSplitOut = {
+interface TransferSplitOut {
   fee_list: number[];
   tx_hash_list: string[];
 }
 
 
-type SweepDustOut = {
+interface SweepDustOut {
   tx_hash_list: string[];
 }
 
 
-type StoreOut = { }
+interface StoreOut { }
 
 
-type GetPaymentsIn = {
+interface GetPaymentsIn {
   payment_id: string;
 }
 
 
-type Payment = {
+interface Payment {
   amount: number;
   block_height: number;
   payment_id: string;
@@ -152,23 +152,23 @@ type Payment = {
 };
 
 
-type GetPaymentsOut = {
+interface GetPaymentsOut {
   payments: Payment[]
 }
 
 
-type GetBulkPaymentsIn = {
+interface GetBulkPaymentsIn {
   payment_ids: string[]; // - array of: string
   min_block_height: number; // - unsigned int; The block height at which to start looking for payments.
 }
 
 
-type GetBulkPaymentsOut = {
+interface GetBulkPaymentsOut {
   payments: Payment[];
 }
 
 
-type GetTransfersIn = {
+interface GetTransfersIn {
   in?: boolean; // - boolean;
   out?: boolean; // - boolean;
   pending?: boolean; // - boolean;
@@ -180,7 +180,7 @@ type GetTransfersIn = {
 }
 
 
-type GetTransfersOut = {
+interface GetTransfersOut {
   in?: Transfer[] & Destination[]; // - boolean;
   out?: Transfer[]; // - boolean;
   pending?: Transfer[]; // - boolean;
@@ -189,7 +189,7 @@ type GetTransfersOut = {
 }
 
 
-type Transfer = {
+interface Transfer {
   amount: number;
   fee: number;
   height: number;
@@ -197,16 +197,16 @@ type Transfer = {
   payment_id: string;
   timestamp: number;
   txid: string;
-  type: string;
+  interface: string;
 };
 
 
-type IncomingTransfersIn = {
+interface IncomingTransfersIn {
   transfer_type: "all" | "available" | "unavailable"
 }
 
 
-type IncomingTransfersOut = {
+interface IncomingTransfersOut {
   amount: number; // - unsigned int
   spent: boolean; // - boolean
   global_index: number; // - unsigned int; Mostly internal use, can be ignored by most users.
@@ -215,34 +215,34 @@ type IncomingTransfersOut = {
 }
 
 
-type QueryKeyIn = {
+interface QueryKeyIn {
   key_type: string;
 }
 
 
-type QueryKeyOut = {
+interface QueryKeyOut {
   key: string;
 }
 
 
-type MakeIntegratedAddressIn = {
+interface MakeIntegratedAddressIn {
   payment_id: string;
 }
 
 
-type IntegratedAddress = {
+interface IntegratedAddress {
   integrated_address: Address;
   payment_id: string;
 }
 
 
-type SplitIntegratedAddressOut = {
+interface SplitIntegratedAddressOut {
   standard_address: Address;
   payment_id: string;
 }
 
 
-type MakeUriIn = {
+interface MakeUriIn {
   address: Address;
   amount?: number; // (optional) - the integer amount to receive, in atomic units
   payment_id?: string; // (optional) - 16 or 64 character hexadecimal payment id string
@@ -251,11 +251,11 @@ type MakeUriIn = {
 }
 
 
-type Uri = {
+interface Uri {
   uri: string;
 }
 
 
-type ParseUri = {
+interface ParseUri {
   uri: MakeUriIn;
 }

@@ -19,17 +19,17 @@ const rpcBody = (method) => (params) =>
 
 // curried so that if i want to create class of curried functions for a given
 // wallet possible althought not using it as of now
-const configRequest = (args1) => (args2) =>
+const configRequest = (args1) => (arg2) =>
   ({
     method: 'Post',
     headers: { 'Content-Type': 'application/json' },
     ...args1,
-    body: JSON.stringify(args2),
+    body: JSON.stringify(arg2),
   })
 
 
 const jsonRpcRequest = (url) => (method, params = {}) =>
-  configRequest({ url: url })(
+  configRequest({ url })(
     rpcBody(method)(params))
 
 
