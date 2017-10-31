@@ -2,11 +2,10 @@ import * as rxjsfetch from 'rxjs-fetch';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/toPromise'
 import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/concatMapTo';
 import 'rxjs/add/operator/mergeMap';
-import 'rxjs/add/operator/delay';
 import 'rxjs/add/operator/filter';
-import 'rxjs/add/operator/repeat';
+import 'rxjs/add/observable/timer';
+import 'rxjs/add/observable/of';
 
 const rpcBody = (method) => (params) =>
   ({
