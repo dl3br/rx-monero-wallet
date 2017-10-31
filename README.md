@@ -88,6 +88,35 @@ streamtransfers()
         txid: '21018c28384df394eca65a0bece75ae52611551b458757c844381663bfbad029',
         type: 'pool' } ]
 
+
+create a block height change detector
+-------------------------------------
+
+``` javascript
+const autoRefresher = (refreshInterval: number) =>
+  Observable.timer(0, refreshInterval)
+
+const heightChangeDetector = (lastHeight = 0) => autoRefresher(1000)
+  .flatMap(() => wallet.getheight())
+  .map((res) => res.height)
+  .filter((height) => height !== lastHeight)
+  .map((height) => lastHeight = height)
+
+const streamheight = () => heightChangeDetector()
+  .subscribe(
+  console.log,
+  (err) => { console.error(err); streamheight() }, // i recover from errors
+  () => console.log('finished'))
+
+streamheight()
+```
+
+    20838
+    20839
+    20840
+    20842
+    20843
+
 get the wallets balance
 -----------------------
 
@@ -110,7 +139,7 @@ wallet.make_integrated_address({ payment_id: generatePaymentId(16) })
     { integrated_address: 'A7Xn9qZeVE1ZiLn66S3Qzv8QfmtcwkdXgM5cWGsXAPxoQeMQ79md51PLPCijvzk1iHbuHi91pws5B7iajTX9KTtJ6HrNTTbikgW5Zm1CGn',
       payment_id: 'a14ba0c1f740c728' }
 
-get payments using a list of payment~id~
+get payments using a list of payment ids
 ----------------------------------------
 
 -   only one payment~id~ used on this example
@@ -127,32 +156,6 @@ wallet.get_bulk_payments({ payment_ids: ['1234567890123456'],
         payment_id: '1234567890123456',
         tx_hash: 'ccd72c2394ad840fc6f0d475ac612e6cbe983ab9db953d7f3c7831c4caa40699',
         unlock_time: 0 } ]
-
-create a block height change detector
--------------------------------------
-
-``` javascript
-const heightChangeDetector = (lastHeight = 0) => autoRefresher(1000)
-  .flatMap(() => wallet.getheight())
-  .map((res) => res.height)
-  .filter((height) => height !== lastHeight)
-  .map((height) => lastHeight = height)
-
- streamheight = () => heightChangeDetector
-  .subscribe(
-    console.log,
-    (err) => { console.error(err) ; streamheight() },
-    () => console.log('finished'))
-    
-    
-  streamheight()
-```
-
-    20838
-    20839
-    20840
-    20842
-    20843
 
 Donation
 --------

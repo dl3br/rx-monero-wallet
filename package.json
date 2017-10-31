@@ -1,6 +1,6 @@
 {
   "name": "rx-monero-wallet",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "description": "Client for the monero-wallet-rpc using rxjs",
   "main": "dist/index.js",
   "scripts": {
