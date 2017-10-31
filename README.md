@@ -58,19 +58,23 @@ wallet.getaddress()
 listen to transfers send to the current wallet in mempool
 ---------------------------------------------------------
 
--   uses recursive subscription to an Observable
 -   the 3 arguments for .subscribe are the following callbacks: onNext,
     onError and onComplete
--   delay is the interval to wait between subscriptions in ms
+-   1000 is the interval to wait between requests in ms
 
 ``` javascript
-const streamtransfers = () => wallet.get_transfers({ pool: true })
-  .delay(1000)
+const autoRefresher = (refreshInterval: number) =>
+  Observable.timer(0, refreshInterval)
+```
+
+``` javascript
+const streamtransfers = () => autoRefresher(1000)
+  .flatMap(() => wallet.get_transfers({ pool: true }))
   .map((res) => res.pool)
   .filter((pool) => pool != undefined)
   .subscribe(console.log,
              console.error,
-             streamtransfers)
+             () => console.log('finished'))
 
 streamtransfers()
 ```
@@ -128,18 +132,20 @@ create a block height change detector
 -------------------------------------
 
 ``` javascript
-let lastHeight
-const heightChangeDetector = () => wallet.getheight()
-  .delay(1000)
+const heightChangeDetector = (lastHeight = 0) => autoRefresher(1000)
+  .flatMap(() => wallet.getheight())
   .map((res) => res.height)
   .filter((height) => height !== lastHeight)
   .map((height) => lastHeight = height)
+
+ streamheight = () => heightChangeDetector
   .subscribe(
     console.log,
-    console.error,
-    heightChangeDetector)
-
-heightChangeDetector()
+    (err) => { console.error(err) ; streamheight() },
+    () => console.log('finished'))
+    
+    
+  streamheight()
 ```
 
     20838
@@ -147,64 +153,6 @@ heightChangeDetector()
     20840
     20842
     20843
-
-``` javascript
-const streamheight = () => wallet.getheight()
-  .map((res) => res.height)
-  .delay(1000)
-  .subscribe(console.log,
-             console.error,
-             streamheight)
-
-streamheight()
-```
-
-    18172
-    18172
-    18172
-    18172
-    18172
-    18172
-    18172
-    18173
-    18173
-    18173
-    18173
-    18173
-    18173
-    18173
-    18173
-    18173
-    18173
-    18173
-    18173
-    18173
-    18173
-    18173
-    18173
-    18173
-    18173
-    18173
-    18173
-    18175
-    18175
-    18175
-    18175
-    18175
-
-same stream but now using a more useful callback for error recovery.
-
-``` javascript
-const streamheight = () => wallet.getheight()
-  .map((res) => res.height)
-  .delay(1000)
-  .subscribe(console.log,
-             (err) => { console.error(err) ;
-                        streamheight() },
-             streamheight)
-
-streamheight()
-```
 
 Donation
 --------
