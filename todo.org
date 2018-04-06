@@ -1,0 +1,25 @@
+* missing rpc methods
+:PROPERTIES:
+:CREATED: [2018-04-06 Fri 17:49]
+:SOURCE: 
+:MODIFIED: [2018-04-06 Fri 18:53]
+:END:
+
+- [X] sweep_all
+- [X] get_transfer_by_txid
+- [ ] rescan_blockchain
+- [ ] set_tx_notes
+- [ ] get_tx_notes
+- [ ] sign
+- [ ] verify
+- [ ] export_key_images
+- [ ] import_key_images
+- [X] get_address_book
+- [X] add_address_book
+- [ ] delete_address_book
+- [ ] rescan_spent
+- [ ] start_mining
+- [ ] stop_mining
+- [ ] get_languages
+- [X] create_wallet
+- [X] open_wallet

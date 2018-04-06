@@ -25,6 +25,8 @@ export const Wallet = (url) => ({
 
   sweep_dust: () => request(url)('sweep_dust'),
 
+  sweep_all: (x: SweepAllIn): Observable<SweepAllOut> => request(url)('sweep_all'),
+
   store: (): Observable<StoreOut> => request(url)('store'),
 
   get_payments: (x: GetPaymentsIn): Observable<GetPaymentsOut> =>
@@ -35,6 +37,9 @@ export const Wallet = (url) => ({
 
   get_transfers: (x: GetTransfersIn): Observable<GetTransfersOut> =>
     request(url)('get_transfers', x),
+
+  get_transfer_by_txid: (x: { txid: string }): Observable<Transfer> =>
+    request(url)('get_transfer_by_txid', x),
 
   incoming_transfers: (x: IncomingTransfersIn): Observable<IncomingTransfersOut> =>
     request(url)('incoming_transfers', x),
@@ -54,10 +59,27 @@ export const Wallet = (url) => ({
     request(url)('make_uri', x),
 
   parse_uri: (x: Uri): Observable<MakeUriIn> =>
-    request(url)('parse_uri', x)
+    request(url)('parse_uri', x),
+
+  get_address_book: (x: {entries: number[]}): Observable<GetAddressBookOut> =>
+    request(url)('get_address_book', x),
+
+  add_address_book: (x: AddAddressBook): Observable<{index: number}> =>
+    request(url)('add_address_book', x),
+
+  delete_address_book: (x: {index: number}) =>
+    request(url)('delete_address_book', x),
+
+  open_wallet: (x: OpenWallet) =>
+    request(url)('open_wallet', x),
+
+  create_wallet: (x: CreateWallet ) =>
+    request(url)('create_wallet', x),
+
+  other: (method: string, arg?: any): Observable<any> =>
+    request(url)(method, arg),
 
 });
-
 
 export const generatePaymentId = (length: 16 | 64) =>
   Random.hex(false)(Random.engines.nativeMath, length);
@@ -197,7 +219,7 @@ interface Transfer {
   payment_id: string;
   timestamp: number;
   txid: string;
-  interface: string;
+  type: string;
 };
 
 
@@ -258,4 +280,48 @@ interface Uri {
 
 interface ParseUri {
   uri: MakeUriIn;
+}
+
+interface SweepAllIn {
+  address: string; // Destination public address.
+  priority?: number; // (Optional)
+  mixin: number; //  Number of outpouts from the blockchain to mix with (0 means no mixing).
+  unlock_time: number; // unsigned int; Number of blocks before the monero can be spent (0 to not add a lock).
+  payment_id?: string; // (Optional) Random 32-byte/64-character hex string to identify a transaction.
+  get_tx_keys?: boolean; // (Optional) Return the transaction keys after sending.
+  below_amount?: number; // (Optional)
+  do_not_relay?: boolean; // (Optional)
+  get_tx_hex: boolean; // (Optional) return the transactions as hex encoded string.
+}
+
+interface SweepAllOut {
+  tx_hash_list: string[];
+  tx_key_list: string[];
+  tx_blob_list: string[];
+}
+
+ interface GetAddressBookOut {
+    entries: {
+      address: string,
+      description: string,
+      index: number,
+      payment_id: string
+    }
+ }
+
+interface AddAddressBook {
+    address: string;
+    payment_id?: string // (optional) string, defaults to "0000000000000000000000000000000000000000000000000000000000000000";
+    description?:  string // (optional) string, defaults to "";
+}
+
+interface OpenWallet {
+    filename: string;
+    password: string;
+}
+
+interface CreateWallet {
+    filename: string;
+    password: string;
+    language: string; // Language for your wallets' seed.
 }
