@@ -6,7 +6,6 @@ import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/observable/timer';
 import 'rxjs/add/observable/of';
-import 'rxjs/add/observable/scan';
 
 const rpcBody = (method) => (params) =>
   ({
